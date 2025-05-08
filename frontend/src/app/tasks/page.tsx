@@ -1,20 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Edit, Trash2, Plus, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { useEffect, useState } from "react"
+import FilterSession from "./components/filters"
+import Header from "./components/header"
+import TasksList from "./components/tasksList"
 
 // Definição do tipo de tarefa
 type Task = {
@@ -25,7 +14,6 @@ type Task = {
   createdAt: Date
 }
 
-// Componente principal
 export default function TaskPanel() {
   // Estados
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -37,10 +25,6 @@ export default function TaskPanel() {
     return []
   })
 
-  const [newTaskText, setNewTaskText] = useState("")
-  const [newTaskPriority, setNewTaskPriority] = useState<"baixa" | "média" | "alta">("média")
-  const [editingTask, setEditingTask] = useState<string | null>(null)
-  const [editText, setEditText] = useState("")
   const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
   const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
 
@@ -48,46 +32,6 @@ export default function TaskPanel() {
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks))
   }, [tasks])
-
-  // Adicionar nova tarefa
-  const addTask = () => {
-    if (newTaskText.trim() === "") return
-
-    const newTask: Task = {
-      id: Date.now().toString(),
-      text: newTaskText,
-      completed: false,
-      priority: newTaskPriority,
-      createdAt: new Date(),
-    }
-
-    setTasks([...tasks, newTask])
-    setNewTaskText("")
-  }
-
-  // Alternar status de conclusão
-  const toggleTaskCompletion = (id: string) => {
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, completed: !task.completed } : task)))
-  }
-
-  // Remover tarefa
-  const removeTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id))
-  }
-
-  // Iniciar edição
-  const startEditing = (task: Task) => {
-    setEditingTask(task.id)
-    setEditText(task.text)
-  }
-
-  // Salvar edição
-  const saveEdit = (id: string) => {
-    if (editText.trim() === "") return
-
-    setTasks(tasks.map((task) => (task.id === id ? { ...task, text: editText } : task)))
-    setEditingTask(null)
-  }
 
   // Filtrar tarefas
   const filteredTasks = tasks
@@ -105,33 +49,18 @@ export default function TaskPanel() {
       const priorityOrder = { alta: 3, média: 2, baixa: 1 }
       return priorityOrder[b.priority] - priorityOrder[a.priority]
     })
+    
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      
+      <Header />
 
-  // Obter cor da prioridade
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "alta":
-        return "destructive"
-      case "média":
-        return "warning"
-      case "baixa":
-        return "secondary"
-      default:
-        return "secondary"
-    }
-  }
-
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      {/* Cabeçalho */}
-      <header className="mb-8 text-center">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent mb-2">
-          Painel de Tarefas
-        </h1>
-        <p className="text-muted-foreground">Organize suas tarefas de forma eficiente</p>
-      </header>
-
+      <FilterSession  />
+  
+      <TasksList  />
+      
       {/* Formulário para adicionar tarefas */}
-      <Card className="mb-6">
+      {/* <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="flex flex-col sm:flex-row gap-2">
             <Input
@@ -159,57 +88,11 @@ export default function TaskPanel() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
-      {/* Barra de filtros */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-        <h2 className="text-xl font-semibold">
-          {filteredTasks.length} {filteredTasks.length === 1 ? "Tarefa" : "Tarefas"}
-        </h2>
-        <div className="flex gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={statusFilter}
-                onValueChange={(value: "todas" | "concluídas" | "pendentes") => setStatusFilter(value)}
-              >
-                <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="pendentes">Pendentes</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="concluídas">Concluídas</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Prioridade
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={priorityFilter}
-                onValueChange={(value: "todas" | "baixa" | "média" | "alta") => setPriorityFilter(value)}
-              >
-                <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="baixa">Baixa</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="média">Média</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="alta">Alta</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
 
       {/* Lista de tarefas */}
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         {filteredTasks.length === 0 ? (
           <Card>
             <CardContent className="p-6 text-center text-muted-foreground">
@@ -250,7 +133,7 @@ export default function TaskPanel() {
                     {!task.completed && (
                       <Button variant="ghost" size="icon" onClick={() => startEditing(task)} className="h-8 w-8">
                         <Edit className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
+                        <span className="">Editar</span>
                       </Button>
                     )}
                     {!task.completed && (
@@ -270,7 +153,7 @@ export default function TaskPanel() {
             </Card>
           ))
         )}
-      </div>
+      </div> */}
     </div>
   )
 }
