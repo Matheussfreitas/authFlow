@@ -1,0 +1,34 @@
+# Next.js ignore files
+
+# Build files
+.next/
+build/
+dist/
+
+# Node.js modules
+node_modules/
+
+# Config files
+.env
+.env.local
+.env.development
+.env.production
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+*.tmp
+*.bak
+*.swp
+
+# Next.js specific files
+public/next*
+public/static*
+public/_next*
+public/_static*
