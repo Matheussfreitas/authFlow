@@ -13,7 +13,7 @@ const login = async (email: string, password: string): Promise<any> => {
     });
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || error.message;
+    return error.response?.data || error.message;
   }
 };
 

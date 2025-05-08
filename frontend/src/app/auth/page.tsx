@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
 import * as yup from "yup";
 import { login, register } from "../../utils/axios"; 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
@@ -19,6 +19,8 @@ export default function AuthPage() {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+
+  const router = useRouter();
 
   const loginSchema = yup.object().shape({
     email: yup.string().email("O email não é válido").required("O email é obrigatório"),
@@ -38,6 +40,7 @@ export default function AuthPage() {
     try {
       await loginSchema.validate({ email: loginEmail, password: loginPassword }, { abortEarly: false });
       setErrors({});
+      return true;
     } catch (validationErrors) {
       if (validationErrors instanceof yup.ValidationError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -46,6 +49,7 @@ export default function AuthPage() {
         });
         setErrors(fieldErrors);
       }
+      return false;
     }
   }
 
@@ -69,10 +73,19 @@ export default function AuthPage() {
 
   const handleLogin = async () => {
     try {
-      await validateLogin();
-      await login(loginEmail, loginPassword);
-      redirect("/tasks");
-    } catch (errors) {
+      const isValid = await validateLogin();
+      if (!isValid) {
+        return;
+      }
+      const user = await login(loginEmail, loginPassword);
+      console.log("user: " , user.message);
+      if (user.message === "Usuario nao encontrado") {
+        setErrors({ email: "Usuário não encontrado" });
+        return;
+      }
+      router.push("/tasks");
+    } catch (error) {
+      console.error("Erro ao fazer login: ", error);
       setErrors({ general: "Não foi possível realizar o login" });
     }
   };
