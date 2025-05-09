@@ -1,3 +1,4 @@
+import { Task } from '@/types/Task';
 import axios from 'axios';
 
 // Configuração da instância do Axios
@@ -30,4 +31,13 @@ const register = async (name: string, email: string, password: string): Promise<
   }
 };
 
-export { login, register };
+const getTasksByUserId = async (userId: string): Promise<Task[]> => {
+  try {
+    const response = await api.get(`/${userId}/tasks`);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data || error.message;
+  }
+}
+
+export { login, register, getTasksByUserId };
