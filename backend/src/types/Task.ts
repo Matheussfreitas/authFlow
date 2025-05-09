@@ -1,3 +1,5 @@
+import { TaskStatus, TaskPriority } from '@prisma/client';
+
 export type Task = {
   id: string;
   title: string;
@@ -6,19 +8,6 @@ export type Task = {
   priority: TaskPriority;
   createdAt: Date;
   updatedAt: Date;
+  dueDate: Date;
   userId: string;
 }
-
-enum TaskStatus {
-  PENDENTE,
-  CONCLUIDO
-}
-
-enum TaskPriority {
-  URGENTE,
-  ALTA,
-  MEDIA,
-  BAIXA
-}
-
-

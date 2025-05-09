@@ -1,3 +1,4 @@
+import { Task } from './Task';
 export type User = {
   id: string;
   name: string;
@@ -5,4 +6,5 @@ export type User = {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  Task: Task[];
 };
