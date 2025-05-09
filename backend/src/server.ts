@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRouter from "./routes/authRoutes";
+import taskRouter from "./routes/taskRoutes";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRouter);
+app.use("/", taskRouter);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server rodando em https://localhost:${port}`);
