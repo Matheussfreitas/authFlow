@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 prisma.$connect()
   .then(() => {
-    console.log("Conexão com o banco de dados estabelecida com sucesso!");
+    console.log("Conexão com o banco de dados (AuthRepository) estabelecida com sucesso!");
   })
   .catch((error: any) => {
-    console.error("Erro ao conectar ao banco de dados:", error.message);
+    console.error("Erro ao conectar ao banco de dados (AuthRepository):", error.message);
   });
 
 export class AuthRepository {
