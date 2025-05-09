@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { User } from "../types/User";
+import { PrismaClient, User } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14,6 +13,13 @@ prisma.$connect()
 export class AuthRepository {
   async findByEmail(email: string): Promise<User | null> {
     return prisma.user.findUnique({ where: { email } });
+  }
+
+  async findByUserId(id: string): Promise<User | null> {
+    return prisma.user.findUnique({ 
+      where: { id },
+      include: { Task: true }
+     });
   }
 
   async createUser(name: string, email: string, password: string): Promise<User> {
