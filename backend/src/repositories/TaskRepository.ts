@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { Task } from "../types/Task";
+import { PrismaClient, Task, TaskPriority, TaskStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -18,9 +17,9 @@ export class TaskRepository {
     });
   }
 
-  async createTask(userId: string, title: string, description: string, status: string, priority: string): Promise<Task> {
+  async createTask(userId: string, title: string, description: string, status: TaskStatus, priority: TaskPriority, dueDate: Date): Promise<Task> {
     return prisma.task.create({
-      data: { userId, title, description, status, priority },
+      data: { userId, title, description, status, priority, dueDate },
     });
   }
 
@@ -32,7 +31,7 @@ export class TaskRepository {
   }
 
   async deleteTask(taskId: string): Promise<void> {
-    return prisma.task.delete({
+    await prisma.task.delete({
       where: { id: taskId },
     });
   }

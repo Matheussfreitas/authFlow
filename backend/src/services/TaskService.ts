@@ -1,5 +1,5 @@
 import { TaskRepository } from './../repositories/TaskRepository';
-import { Task } from "../types/Task";
+import { Task, TaskPriority, TaskStatus } from "@prisma/client";
 
 const taskRepository = new TaskRepository();
 
@@ -12,8 +12,8 @@ export class TaskService {
     return tasks;
   }
 
-  async createTask(userId: string, title: string, description: string, status: string, priority: string) {
-    const task = await taskRepository.createTask(userId, title, description, status, priority);
+  async createTask(userId: string, title: string, description: string, status: TaskStatus, priority: TaskPriority, dueDate: Date) {
+    const task = await taskRepository.createTask(userId, title, description, status, priority, dueDate);
     return task;
   }
 

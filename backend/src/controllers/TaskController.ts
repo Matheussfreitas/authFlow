@@ -16,9 +16,9 @@ export class TaskController {
 
   static async createTask(req: Request, res: Response) {
     const { userId } = req.params;
-    const { title, description, status, priority } = req.body;
+    const { title, description, status, priority, dueDate } = req.body;
     try {
-      const task = await taskService.createTask(userId, title, description, status, priority);
+      const task = await taskService.createTask(userId, title, description, status, priority, dueDate);
       return res.status(201).json(task);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
