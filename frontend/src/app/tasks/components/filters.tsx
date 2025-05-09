@@ -10,14 +10,19 @@ import {
 } from "@/components/ui/dropdown-menu"
 import CreateTaskModal from "./createTaskModal"
 import { useState } from "react"
+import { Task } from "@/types/Task"
 
-export default function FilterSession({filteredTasks}: any) {
+interface FilterSessionProps {
+  tasks: Task[]
+}
+
+export default function FilterSession({tasks}: FilterSessionProps) {
   const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
   const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
         <h2 className="text-xl font-semibold">
-          {filteredTasks.length} {filteredTasks.length === 1 ? "Tarefa" : "Tarefas"}
+          {tasks.length} {tasks.length === 1 ? "Tarefa" : "Tarefas"}
         </h2>
         <div className="flex items-center gap-2">
           <DropdownMenu>

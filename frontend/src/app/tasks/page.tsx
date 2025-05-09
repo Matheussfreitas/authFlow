@@ -5,24 +5,34 @@ import FilterSession from "./components/filters"
 import Header from "./components/header"
 import TasksList from "./components/tasksList"
 import { Task } from "@/types/Task"
+import { parseCookies } from "nookies"
+import { getUserByToken } from "@/utils/axios"
+import { User } from "@/types/User"
 
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>()
-
-  const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
-  const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
+  const [user, setUser] = useState<User | null>(null);
+  const [tasks, setTasks] = useState<Task[] | []>([]);
 
   useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks))
+    const fetchUserInfo = async () => {
+      const cookies = await parseCookies().authFlowToken;
+      console.log(cookies);
+      const userInfo = await getUserByToken(cookies);
+      console.log("Informações do usuário obtidas: ", userInfo);
+      setUser(userInfo);
+      setTasks(userInfo.Task);
+    };
+
+    fetchUserInfo();
   }, [])
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
 
-      <Header />
+      <Header userName={user?.name || ""} />
 
-      {/* <FilterSession  /> */}
+      <FilterSession tasks={tasks} />
 
       <TasksList />
 
