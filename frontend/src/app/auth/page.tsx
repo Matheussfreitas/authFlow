@@ -8,6 +8,7 @@ import { useState } from "react";
 import * as yup from "yup";
 import { login, register } from "../../utils/axios"; 
 import { useRouter } from "next/navigation";
+import { setCookie } from "nookies";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
@@ -83,6 +84,11 @@ export default function AuthPage() {
         setErrors({ email: "Usuário não encontrado" });
         return;
       }
+      const token = user.token;
+      console.log("authFlowToken: ", token);
+      setCookie(undefined, "authFlowToken", token, {
+        maxAge: 60 * 60 * 1, // 1 hora
+      })
       router.push("/tasks");
     } catch (error) {
       console.error("Erro ao fazer login: ", error);
