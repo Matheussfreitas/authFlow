@@ -11,7 +11,7 @@ export default function Middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname
   const isPublicRoute = public_routes.find(route => route.path === path)
-  const authToken = request.cookies.get('token')
+  const authToken = request.cookies.get('authFlowToken')
 
   if (!authToken && isPublicRoute) {
     return NextResponse.next()
