@@ -11,15 +11,15 @@ export type Task = {
 }
 
 export enum TaskStatus {
-  PENDENTE,
-  CONCLUIDO
+  PENDENTE = "PENDENTE",
+  CONCLUIDO = "CONCLUIDO"
 }
 
 export enum TaskPriority {
-  URGENTE,
-  ALTA,
-  MEDIA,
-  BAIXA
+  URGENTE = "URGENTE",
+  ALTA = "ALTA",
+  MÉDIA = "MÉDIA",
+  BAIXA = "BAIXA"
 }
 
 
