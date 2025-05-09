@@ -105,7 +105,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="container flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen">
       <Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="w-full max-w-md">
         <TabsList className="w-full">
           <TabsTrigger value="login">Login</TabsTrigger>
