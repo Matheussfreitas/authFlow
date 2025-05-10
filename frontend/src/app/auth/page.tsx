@@ -60,7 +60,8 @@ export default function AuthPage() {
         { name: registerName, email: registerEmail, password: registerPassword },
         { abortEarly: false }
       );
-      setErrors({}); // Clear errors if validation passes
+      setErrors({}); 
+      return true;
     } catch (validationErrors) {
       if (validationErrors instanceof yup.ValidationError) {
         const fieldErrors: { [key: string]: string } = {};
@@ -69,6 +70,7 @@ export default function AuthPage() {
         });
         setErrors(fieldErrors);
       }
+      return false;
     }
   }
 
@@ -98,10 +100,20 @@ export default function AuthPage() {
 
   const handleRegister = async () => {
     try {
-      await validateRegister();
-      await register(registerName, registerEmail, registerPassword);
-    } catch (errors) {
-      setErrors({ general: "Não foi possível fazer o cadastro" });
+      const isValid = await validateRegister();
+      if (!isValid) {
+        return;
+      }
+      const registerUser = await register(registerName, registerEmail, registerPassword);
+      console.log("registerUser: ", registerUser);
+      if (registerUser.message === "Email ja cadastrado") {
+        setErrors({ email: "Usuário já existe" });
+        return;
+      }
+      setActiveTab("login");
+    } catch (error: any) {
+      console.error("Erro ao fazer cadastro: ", error);
+      setErrors({ email: "Não foi possível fazer o cadastro" });
     }
   };
 
@@ -112,7 +124,7 @@ export default function AuthPage() {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="w-full max-w-md">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full max-w-md">
         <TabsList className="w-full">
           <TabsTrigger value="login">Login</TabsTrigger>
           <TabsTrigger value="register">Cadastro</TabsTrigger>

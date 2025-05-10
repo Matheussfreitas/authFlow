@@ -1,6 +1,5 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import { Filter } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,63 +7,66 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import CreateTaskModal from "./createTaskModal"
-import { useState } from "react"
 import { Task } from "@/types/Task"
+import { Filter } from "lucide-react"
+import { useState } from "react"
+import CreateTaskModal from "./createTaskModal"
 
 interface FilterSessionProps {
   tasks: Task[]
+  userId: string | undefined
 }
 
-export default function FilterSession({tasks}: FilterSessionProps) {
+export default function FilterSession({ tasks, userId }: FilterSessionProps) {
   const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
   const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-        <h2 className="text-xl font-semibold">
-          {tasks.length} {tasks.length === 1 ? "Tarefa" : "Tarefas"}
-        </h2>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={statusFilter}
-                onValueChange={(value: string) => setStatusFilter(value as "todas" | "concluídas" | "pendentes")}
-              >
-                <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="pendentes">Pendentes</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="concluídas">Concluídas</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+      <h2 className="text-xl font-semibold">
+        {tasks.length} {tasks.length === 1 ? "Tarefa" : "Tarefas"}
+      </h2>
+      <div className="flex items-center gap-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Filter className="mr-2 h-4 w-4" />
+              Status
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuRadioGroup
+              value={statusFilter}
+              onValueChange={(value: string) => setStatusFilter(value as "todas" | "concluídas" | "pendentes")}
+            >
+              <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="pendentes">Pendentes</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="concluídas">Concluídas</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Filter className="mr-2 h-4 w-4" />
-                Prioridade
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuRadioGroup
-                value={priorityFilter}
-                onValueChange={(value: string) => setPriorityFilter(value as "todas" | "baixa" | "média" | "alta")}
-              >
-                <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="baixa">Baixa</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="média">Média</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="alta">Alta</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <CreateTaskModal />
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Filter className="mr-2 h-4 w-4" />
+              Prioridade
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuRadioGroup
+              value={priorityFilter}
+              onValueChange={(value: string) => setPriorityFilter(value as "todas" | "baixa" | "média" | "alta")}
+            >
+              <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="baixa">Baixa</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="média">Média</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="alta">Alta</DropdownMenuRadioItem>
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <CreateTaskModal userId={userId} />
       </div>
+    </div>
   )
 }

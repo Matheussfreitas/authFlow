@@ -9,7 +9,6 @@ import { parseCookies } from "nookies"
 import { getUserByToken } from "@/utils/axios"
 import { User } from "@/types/User"
 
-
 export default function TaskPage() {
   const [user, setUser] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[] | []>([]);
@@ -32,9 +31,9 @@ export default function TaskPage() {
 
       <Header userName={user?.name || ""} />
 
-      <FilterSession tasks={tasks} />
+      <FilterSession tasks={tasks} userId={user?.id} />
 
-      <TasksList />
+      <TasksList tasks={tasks}/>
 
     </div>
   )

@@ -6,7 +6,7 @@ export type Task = {
   priority: TaskPriority;
   createdAt: Date;
   updatedAt: Date;
-  dueDate: Date;
+  dueDate?: Date;
   userId: string;
 }
 
@@ -18,7 +18,7 @@ export enum TaskStatus {
 export enum TaskPriority {
   URGENTE = "URGENTE",
   ALTA = "ALTA",
-  MÉDIA = "MÉDIA",
+  MEDIA = "MÉDIA",
   BAIXA = "BAIXA"
 }
 

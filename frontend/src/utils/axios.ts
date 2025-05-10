@@ -28,7 +28,7 @@ const register = async (name: string, email: string, password: string): Promise<
     });
     return response.data;
   } catch (error: any) {
-    throw error.response?.data || error.message;
+    return error.response?.data || error.message;
   }
 };
 

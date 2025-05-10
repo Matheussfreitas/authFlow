@@ -1,17 +1,35 @@
 "use client"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { TaskPriority, TaskStatus } from "@/types/Task"
-import { Calendar, Clock } from "lucide-react"
+import { Task, TaskPriority, TaskStatus } from "@/types/Task"
+import { Calendar, Clock, Edit } from "lucide-react"
+import EditTaskModal from "./editTaskModal"
+import { useState } from "react"
 
-export default function TasksList() {
+interface TaskListProps {
+  tasks: Task[]
+}
+
+export default function TasksList({ tasks }: TaskListProps) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [taskBeingEdited, setTaskBeingEdited] = useState<Task | null>(null);
+
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-    })
-  }
+    });
+  };
+
+  const calculateRemainingDays = (dueDate: Date | string) => {
+    const currentDate = new Date();
+    const due = new Date(dueDate);
+    const differenceInTime = due.getTime() - currentDate.getTime();
+    const differenceInDays = Math.ceil(differenceInTime / (1000 * 60 * 60 * 24));
+    return differenceInDays > 0 ? differenceInDays : 0; // Retorna 0 se for negativo
+  };
 
   const getStatusColor = (status: TaskStatus) => {
     switch (status) {
@@ -39,33 +57,76 @@ export default function TasksList() {
     }
   };
 
+  const handleEditTask = (taskId: string) => {
+    // Implementar a lógica para editar a tarefa
+    console.log(`Editando tarefa com ID: ${taskId}`);
+  };
+
   return (
-    <div className="flex justify-center">
-      <Card className="w-full max-w-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold line-clamp-2">Terminar rotas de autenticação</CardTitle>
-            <Badge variant="default">Pendente</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-600 gap-2 mb-4 line-clamp-3">Descricão da tarefa</p>
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Calendar className="h-4 w-4" />
-            <span>Vencimento: {formatDate(new Date("2023-01-01"))}</span>
-          </div>
-        </CardContent>
-        <CardFooter className="pt-0 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-gray-500">Prioridade:</p>
-            <Badge variant="outline" className="text-xs">Urgente</Badge>
-          </div>
-          <div className="flex items-center">
-            <Clock className="h-4 w-4 text-gray-500 mr-2" />
-            <span className="text-sm text-gray-500">3 dias</span>
-          </div>
-        </CardFooter>
-      </Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {tasks.map((task) => (
+        <Card key={task.id} className="w-full max-w-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 justify-between flex-1">
+                <CardTitle className="text-lg font-semibold line-clamp-2">{task.title}</CardTitle>
+                <Button
+                  variant="ghost"
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setTaskBeingEdited(task);
+                    setIsEditDialogOpen(true);
+                  }}
+                >
+                  <Edit className="h-4 w-4 text-gray-500" />
+                </Button>
+              </div>
+              <Badge variant="default" className={getStatusColor(task.status)}>
+                {task.status}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 gap-2 mb-4 line-clamp-3">{task.description}</p>
+            <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+              <Calendar className="h-4 w-4" />
+              <span>Vencimento: {formatDate(new Date(task.dueDate))}</span>
+            </div>
+          </CardContent>
+          <CardFooter className="pt-0 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-gray-500">Prioridade:</p>
+              <Badge variant="outline" className={`text-xs ${getPriorityColor(task.priority)}`}>
+                {task.priority}
+              </Badge>
+            </div>
+            <div className="flex items-center">
+              <Clock className="h-4 w-4 text-gray-500 mr-2" />
+              <span className="text-sm text-gray-500">
+                {calculateRemainingDays(task.dueDate)} dias
+              </span>
+            </div>
+          </CardFooter>
+        </Card>
+      ))}
+
+      {taskBeingEdited && (
+        <EditTaskModal
+          task={taskBeingEdited}
+          open={isEditDialogOpen}
+          onOpenChange={(open) => {
+            setIsEditDialogOpen(open);
+            if (!open) setTaskBeingEdited(null);
+          }}
+          onSave={(updatedTask) => {
+            handleEditTask(updatedTask);
+            setIsEditDialogOpen(false);  
+            setTaskBeingEdited(null); 
+          }}
+        />
+
+      )}
+
     </div>
-  )
+  );
 }
