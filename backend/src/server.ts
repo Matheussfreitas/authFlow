@@ -25,5 +25,5 @@ app.use("/auth", authRouter);
 app.use("/", taskRouter);
 
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server rodando em https://localhost:${port}`);
+  console.log(`⚡️[server]: Server rodando em http://localhost:${port}`);
 });
