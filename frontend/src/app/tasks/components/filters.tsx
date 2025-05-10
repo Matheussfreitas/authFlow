@@ -13,11 +13,12 @@ import { useState } from "react"
 import CreateTaskModal from "./createTaskModal"
 
 interface FilterSessionProps {
-  tasks: Task[]
-  userId: string | undefined
+  tasks: Task[];
+  userId: string | undefined;
+  onAddTask: (task: Task) => void;
 }
 
-export default function FilterSession({ tasks, userId }: FilterSessionProps) {
+export default function FilterSession({ tasks, userId, onAddTask }: FilterSessionProps) {
   const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
   const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
 
@@ -65,7 +66,7 @@ export default function FilterSession({ tasks, userId }: FilterSessionProps) {
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <CreateTaskModal userId={userId} />
+        <CreateTaskModal userId={userId} onTaskAdd={onAddTask}/>
       </div>
     </div>
   )

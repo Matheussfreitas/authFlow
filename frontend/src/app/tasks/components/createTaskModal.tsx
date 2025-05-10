@@ -24,9 +24,10 @@ import { cn } from "@/lib/utils";
 
 interface CreateTaskModalProps {
   userId: string | undefined;
+  onTaskAdd: (newTask: Task) => void;
 }
 
-export default function CreateTaskModal({ userId }: CreateTaskModalProps) {
+export default function CreateTaskModal({ userId, onTaskAdd }: CreateTaskModalProps) {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [priority, setPriority] = useState<string>("");
@@ -64,7 +65,7 @@ export default function CreateTaskModal({ userId }: CreateTaskModalProps) {
 
       console.log("Tarefa criada com sucesso:", response);
       alert("Tarefa criada com sucesso!");
-
+      onTaskAdd(response); 
       clearFields(); 
       setIsOpen(false); 
     } catch (error: any) {

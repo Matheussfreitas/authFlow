@@ -8,10 +8,11 @@ import EditTaskModal from "./editTaskModal"
 import { useState } from "react"
 
 interface TaskListProps {
-  tasks: Task[]
+  tasks: Task[];
+  onEditTask: (taskId: string) => Task;
 }
 
-export default function TasksList({ tasks }: TaskListProps) {
+export default function TasksList({ tasks, onEditTask }: TaskListProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [taskBeingEdited, setTaskBeingEdited] = useState<Task | null>(null);
 
@@ -57,9 +58,9 @@ export default function TasksList({ tasks }: TaskListProps) {
     }
   };
 
-  const handleEditTask = (taskId: string) => {
-    // Implementar a lógica para editar a tarefa
-    console.log(`Editando tarefa com ID: ${taskId}`);
+  const handleEditTask = (updatedTask: Task) => {
+    // Chama a função passada via props para atualizar a tarefa no estado global
+    onEditTask(updatedTask.id);
   };
 
   return (

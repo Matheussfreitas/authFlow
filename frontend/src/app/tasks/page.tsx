@@ -13,6 +13,18 @@ export default function TaskPage() {
   const [user, setUser] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[] | []>([]);
 
+  const addTask = (task: Task) => {
+    setTasks((prevTasks) => [...prevTasks, task]);
+  }
+
+  const updateTask = (taskId: string) => {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+    if (!taskToUpdate) {
+      throw new Error("Task not found");
+    }
+    return taskToUpdate;
+  }
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       const cookies = await parseCookies().authFlowToken;
@@ -31,9 +43,9 @@ export default function TaskPage() {
 
       <Header userName={user?.name || ""} />
 
-      <FilterSession tasks={tasks} userId={user?.id} />
+      <FilterSession tasks={tasks} userId={user?.id} onAddTask={addTask}/>
 
-      <TasksList tasks={tasks}/>
+      <TasksList tasks={tasks} onEditTask={updateTask}/>
 
     </div>
   )
