@@ -54,4 +54,21 @@ const createTask = async (userId: string, data: Task): Promise<Task> => {
   }
 }
 
-export { login, register, getUserByToken, createTask };
+const updateTask = async (taskId: string, data: Partial<Omit<Task, "id" | "userId">>): Promise<Task> => {
+  try {
+    const response = await api.put(`/${taskId}`, data);
+    return response.data;
+  } catch (error: any) {
+    return error.response?.data || error.message;
+  }
+}
+
+const deleteTask = async (taskId: string): Promise<void> => {
+  try {
+    await api.delete(`/${taskId}`);
+  } catch (error: any) {
+    return error.response?.data || error.message;
+  }
+}
+
+export { login, register, getUserByToken, createTask, updateTask, deleteTask };
