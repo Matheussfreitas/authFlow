@@ -7,7 +7,7 @@ Este é um projeto de Gerenciador de Tarefas desenvolvido com **Next.js** no fro
 - **Frontend**:
   - Desenvolvido com **Next.js**.
   - Interface moderna e responsiva utilizando **TailwindCSS**.
-  - Componentes reutilizáveis criados com **Radix UI**.
+  - Componentes reutilizáveis criados com **Shadcn UI**.
   - Gerenciamento de estado com hooks do React.
   - Validação de formulários com **Yup**.
   - Notificações com **Sonner**.
@@ -27,7 +27,7 @@ Este é um projeto de Gerenciador de Tarefas desenvolvido com **Next.js** no fro
 ### Frontend
 - **Next.js**: Framework React para renderização no lado do servidor e geração de páginas estáticas.
 - **TailwindCSS**: Framework CSS para estilização.
-- **Radix UI**: Biblioteca de componentes acessíveis.
+- **Shadcn UI**: Biblioteca de componentes acessíveis.
 - **Yup**: Validação de formulários.
 - **Sonner**: Biblioteca para notificações.
 - **Axios**: Cliente HTTP para comunicação com o backend.
