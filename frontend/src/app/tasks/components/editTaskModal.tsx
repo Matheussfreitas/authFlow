@@ -41,18 +41,13 @@ export default function EditTaskModal({ task, open, onOpenChange, onSave }: Task
       priority,
       dueDate: data,
     };
-
+    console.log("Tarefa atualizada: ", updatedTask);
     onSave(updatedTask);
     onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* <DialogTrigger asChild>
-        <Button variant="ghost" className="cursor-pointer">
-          <Edit className="h-4 w-4 text-gray-500" />
-        </Button>
-      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader className="mb-2">
           <DialogTitle>Editar Tarefa</DialogTitle>
@@ -112,7 +107,7 @@ export default function EditTaskModal({ task, open, onOpenChange, onSave }: Task
         <DialogFooter className="mt-4 w-full">
           <Button
             type="button"
-            className="max-w-xs w-full mx-auto"
+            className="max-w-xs w-full mx-auto cursor-pointer"
             onClick={handleSaveTask}
           >
             Salvar

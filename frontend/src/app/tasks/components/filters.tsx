@@ -9,19 +9,27 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Task } from "@/types/Task"
 import { Filter } from "lucide-react"
-import { useState } from "react"
 import CreateTaskModal from "./createTaskModal"
 
 interface FilterSessionProps {
   tasks: Task[];
   userId: string | undefined;
   onAddTask: (task: Task) => void;
+  statusFilter: "todas" | "concluídas" | "pendentes";
+  setStatusFilter: (value: "todas" | "concluídas" | "pendentes") => void;
+  priorityFilter: "todas" | "baixa" | "média" | "alta" | "urgente";
+  setPriorityFilter: (value: "todas" | "baixa" | "média" | "alta" | "urgente") => void;
 }
 
-export default function FilterSession({ tasks, userId, onAddTask }: FilterSessionProps) {
-  const [statusFilter, setStatusFilter] = useState<"todas" | "concluídas" | "pendentes">("todas")
-  const [priorityFilter, setPriorityFilter] = useState<"todas" | "baixa" | "média" | "alta">("todas")
-
+export default function FilterSession({
+  tasks,
+  userId,
+  onAddTask,
+  statusFilter,
+  setStatusFilter,
+  priorityFilter,
+  setPriorityFilter,
+}: FilterSessionProps) {
   return (
     <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
       <h2 className="text-xl font-semibold">
@@ -30,7 +38,7 @@ export default function FilterSession({ tasks, userId, onAddTask }: FilterSessio
       <div className="flex items-center gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="cursor-pointer">
               <Filter className="mr-2 h-4 w-4" />
               Status
             </Button>
@@ -49,7 +57,7 @@ export default function FilterSession({ tasks, userId, onAddTask }: FilterSessio
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="cursor-pointer">
               <Filter className="mr-2 h-4 w-4" />
               Prioridade
             </Button>
@@ -57,16 +65,17 @@ export default function FilterSession({ tasks, userId, onAddTask }: FilterSessio
           <DropdownMenuContent>
             <DropdownMenuRadioGroup
               value={priorityFilter}
-              onValueChange={(value: string) => setPriorityFilter(value as "todas" | "baixa" | "média" | "alta")}
+              onValueChange={(value: string) => setPriorityFilter(value as "todas" | "baixa" | "média" | "alta" | "urgente")}
             >
               <DropdownMenuRadioItem value="todas">Todas</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="baixa">Baixa</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="média">Média</DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="alta">Alta</DropdownMenuRadioItem>
+              <DropdownMenuRadioItem value="urgente">Urgente</DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <CreateTaskModal userId={userId} onTaskAdd={onAddTask}/>
+        <CreateTaskModal userId={userId} onTaskAdd={onAddTask} />
       </div>
     </div>
   )

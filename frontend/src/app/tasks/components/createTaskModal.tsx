@@ -14,13 +14,14 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Task } from "@/types/Task";
+import { Task, TaskPriority, TaskStatus } from "@/types/Task";
 import { createTask } from "@/utils/axios";
 import { CalendarIcon, Plus } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface CreateTaskModalProps {
   userId: string | undefined;
@@ -32,7 +33,7 @@ export default function CreateTaskModal({ userId, onTaskAdd }: CreateTaskModalPr
   const [description, setDescription] = useState<string>("");
   const [priority, setPriority] = useState<string>("");
   const [data, setData] = useState<Date>();
-  const [isOpen, setIsOpen] = useState<boolean>(false); // Estado para controlar o modal
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const clearFields = () => {
     setTitle("");
@@ -52,7 +53,7 @@ export default function CreateTaskModal({ userId, onTaskAdd }: CreateTaskModalPr
         description,
         priority,
         dueDate: data,
-        status: "PENDENTE",
+        status: TaskStatus.PENDENTE,
       };
 
       console.log("Dados da tarefa: ", taskData);
@@ -64,21 +65,21 @@ export default function CreateTaskModal({ userId, onTaskAdd }: CreateTaskModalPr
       }
 
       console.log("Tarefa criada com sucesso:", response);
-      alert("Tarefa criada com sucesso!");
-      onTaskAdd(response); 
-      clearFields(); 
-      setIsOpen(false); 
+      onTaskAdd(response);
+      clearFields();
+      setIsOpen(false);
+      toast.success(`Tarefa "${response.title}" criada com sucesso!`);
     } catch (error: any) {
       console.error("Erro ao criar tarefa:", error);
       const errorMessage = error.response?.data?.message || error.message || "Erro ao criar tarefa. Tente novamente.";
-      alert(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setIsOpen(true)}>
+        <Button onClick={() => setIsOpen(true)} className="cursor-pointer">
           <Plus className="h-4 w-4" /> Criar Tarefa
         </Button>
       </DialogTrigger>
@@ -142,7 +143,7 @@ export default function CreateTaskModal({ userId, onTaskAdd }: CreateTaskModalPr
         <DialogFooter className="mt-4 w-full">
           <Button
             type="button"
-            className="max-w-xs w-full mx-auto"
+            className="max-w-xs w-full mx-auto cursor-pointer"
             onClick={handleCreateTask}
           >
             Criar
