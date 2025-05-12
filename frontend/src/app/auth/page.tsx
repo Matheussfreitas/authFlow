@@ -9,10 +9,11 @@ import * as yup from "yup";
 import { login, register } from "../../utils/axios"; 
 import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
+import { toast } from "sonner"; // Importação do toast da biblioteca sonner
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
-  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // Alterado para um objeto
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -52,7 +53,7 @@ export default function AuthPage() {
       }
       return false;
     }
-  }
+  };
 
   const validateRegister = async () => {
     try {
@@ -60,7 +61,7 @@ export default function AuthPage() {
         { name: registerName, email: registerEmail, password: registerPassword },
         { abortEarly: false }
       );
-      setErrors({}); 
+      setErrors({});
       return true;
     } catch (validationErrors) {
       if (validationErrors instanceof yup.ValidationError) {
@@ -72,7 +73,7 @@ export default function AuthPage() {
       }
       return false;
     }
-  }
+  };
 
   const handleLogin = async () => {
     try {
@@ -81,20 +82,21 @@ export default function AuthPage() {
         return;
       }
       const user = await login(loginEmail, loginPassword);
-      console.log("user: " , user.message);
       if (user.message === "Usuario nao encontrado") {
         setErrors({ email: "Usuário não encontrado" });
+        toast.error("Usuário não encontrado");
         return;
       }
       const token = user.token;
-      console.log("authFlowToken: ", token);
       setCookie(undefined, "authFlowToken", token, {
         maxAge: 60 * 60 * 1, // 1 hora
-      })
+      });
+      toast.success("Login realizado com sucesso!");
       router.push("/tasks");
     } catch (error) {
       console.error("Erro ao fazer login: ", error);
       setErrors({ general: "Não foi possível realizar o login" });
+      toast.error("Erro ao realizar login. Tente novamente.");
     }
   };
 
@@ -105,15 +107,17 @@ export default function AuthPage() {
         return;
       }
       const registerUser = await register(registerName, registerEmail, registerPassword);
-      console.log("registerUser: ", registerUser);
       if (registerUser.message === "Email ja cadastrado") {
         setErrors({ email: "Usuário já existe" });
+        toast.error("Usuário já existe");
         return;
       }
+      toast.success("Cadastro realizado com sucesso! Faça login para continuar.");
       setActiveTab("login");
     } catch (error: any) {
       console.error("Erro ao fazer cadastro: ", error);
       setErrors({ email: "Não foi possível fazer o cadastro" });
+      toast.error("Erro ao realizar cadastro. Tente novamente.");
     }
   };
 
