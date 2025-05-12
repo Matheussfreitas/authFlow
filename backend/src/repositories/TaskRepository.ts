@@ -24,11 +24,20 @@ export class TaskRepository {
   }
 
   async updateTask(taskId: string, data: Partial<Omit<Task, "id" | "userId">>): Promise<Task> {
-    return prisma.task.update({
-      where: { id: taskId },
-      data,
-    });
+    const existingTask = await prisma.task.findUnique({
+    where: { id: taskId },
+  });
+
+  if (!existingTask) {
+    console.error(`Tarefa com ID ${taskId} não encontrada no banco de dados.`);
+    throw new Error("Tarefa não encontrada.");
   }
+
+  return prisma.task.update({
+    where: { id: taskId },
+    data,
+  });
+}
 
   async deleteTask(taskId: string): Promise<void> {
     await prisma.task.delete({
