@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Task, TaskPriority, TaskStatus } from "@/types/Task"
-import { Calendar, Clock, Edit, Trash2 } from "lucide-react"
+import { Calendar, Clock, Edit, Loader, Trash2 } from "lucide-react"
 import EditTaskModal from "./editTaskModal"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
@@ -20,6 +20,12 @@ interface TaskListProps {
 export default function TasksList({ tasks, onEditTask, onCompleteTask, onDeleteTask }: TaskListProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [taskBeingEdited, setTaskBeingEdited] = useState<Task | null>(null);
+  const [loading, setLoading] = useState(true); // Estado de loading
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000); // Simula 1 segundo de carregamento
+    return () => clearTimeout(timer);
+  }, []);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("pt-BR", {
@@ -90,6 +96,23 @@ export default function TasksList({ tasks, onEditTask, onCompleteTask, onDeleteT
     toast.success(`Tarefa "${updatedTask.title}" foi atualizada com sucesso!`);
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <Loader className="h-8 w-8 animate-spin text-gray-500" />
+        <p className="text-gray-500 mt-2">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-gray-500 mt-2">Sem tarefas cadastradas</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
       {tasks.map((task) => (
@@ -133,7 +156,7 @@ export default function TasksList({ tasks, onEditTask, onCompleteTask, onDeleteT
                 <Button
                   variant="ghost"
                   size="icon"
-                  className={`h-8 w-8 rounded-full hover:bg-red-100 ${
+                  className={`h-8 w-8 rounded-full hover:bg-red-100 cursor-pointer ${
                     task.status === TaskStatus.CONCLUIDO ? "cursor-not-allowed opacity-50" : ""
                   }`}
                   onClick={() => handleDeleteTask(task.id)}
