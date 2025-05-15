@@ -36,4 +36,17 @@ export class AuthController {
       res.status(401).json({ message: error.message });
     }
   }
+
+  static async googleCallback(req: Request, res: Response) {
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ message: "Usuário não autenticado" });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      console.error("Erro no callback do Google:", error);
+      res.status(500).json({ message: "Erro ao processar login do Google" });
+    }
+  }
 }

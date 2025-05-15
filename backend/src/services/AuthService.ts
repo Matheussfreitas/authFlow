@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRepository } from "../repositories/AuthRepository";
+import { Profile } from "passport-google-oauth20";
 
 const authRepository = new AuthRepository();
 
@@ -45,5 +46,23 @@ export class AuthService {
     } catch (error) {
       throw new Error("Token invalido");
     }
+  }
+
+  async handleGoogleLogin(profile: Profile) {
+    if (!profile.emails || profile.emails.length === 0) {
+      throw new Error("O perfil do Google não contém um e-mail válido.");
+    }
+    const email = profile.emails[0].value;
+    const name = profile.displayName;
+    let user = await authRepository.findByEmail(email);
+    if (!user) {
+      user = await authRepository.createUser(name, email, "google_oauth_default_password");
+      console.log("[AuthService] Novo usuário criado:", user.id);
+    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+      expiresIn: "1h",
+    });
+    console.log("[AuthService] Usuário autenticado com sucesso:", user.id);
+    return { id: user.id, name: user.name, token };
   }
 }
