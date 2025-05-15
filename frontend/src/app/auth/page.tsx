@@ -1,27 +1,18 @@
 "use client"
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
 import * as yup from "yup";
-import { login, register } from "../../utils/axios"; 
+import { login, register as registerApi } from "../../utils/axios";
 import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
-import { toast } from "sonner"; // Importação do toast da biblioteca sonner
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import CardLogin from "./components/cardLogin";
+import CardRegister from "./components/cardRegister";
 
 export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-
-  const [registerName, setRegisterName] = useState("");
-  const [registerEmail, setRegisterEmail] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
-
   const router = useRouter();
 
   const loginSchema = yup.object().shape({
@@ -38,52 +29,31 @@ export default function AuthPage() {
       .required("A senha é obrigatória"),
   });
 
-  const validateLogin = async () => {
-    try {
-      await loginSchema.validate({ email: loginEmail, password: loginPassword }, { abortEarly: false });
-      setErrors({});
-      return true;
-    } catch (validationErrors) {
-      if (validationErrors instanceof yup.ValidationError) {
-        const fieldErrors: { [key: string]: string } = {};
-        validationErrors.inner.forEach((error) => {
-          if (error.path) fieldErrors[error.path] = error.message;
-        });
-        setErrors(fieldErrors);
-      }
-      return false;
-    }
-  };
+  type FormLoginSchema = yup.InferType<typeof loginSchema>;
+  type FormRegisterSchema = yup.InferType<typeof registerSchema>;
 
-  const validateRegister = async () => {
-    try {
-      await registerSchema.validate(
-        { name: registerName, email: registerEmail, password: registerPassword },
-        { abortEarly: false }
-      );
-      setErrors({});
-      return true;
-    } catch (validationErrors) {
-      if (validationErrors instanceof yup.ValidationError) {
-        const fieldErrors: { [key: string]: string } = {};
-        validationErrors.inner.forEach((error) => {
-          if (error.path) fieldErrors[error.path] = error.message;
-        });
-        setErrors(fieldErrors);
-      }
-      return false;
-    }
-  };
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors: loginErrors }, 
+    reset: resetLogin 
+  } = useForm<FormLoginSchema>({
+    resolver: yupResolver(loginSchema),
+  });
 
-  const handleLogin = async () => {
+  const {
+    register: registerRegister,
+    handleSubmit: handleSubmitRegister,
+    formState: { errors: errorsRegister },
+    reset: resetRegister
+  } = useForm<FormRegisterSchema>({
+    resolver: yupResolver(registerSchema),
+  });
+
+  const handleLogin = async (data: FormLoginSchema) => {
     try {
-      const isValid = await validateLogin();
-      if (!isValid) {
-        return;
-      }
-      const user = await login(loginEmail, loginPassword);
+      const user = await login(data.email, data.password);
       if (user.message === "Usuario nao encontrado") {
-        setErrors({ email: "Usuário não encontrado" });
         toast.error("Usuário não encontrado");
         return;
       }
@@ -95,35 +65,28 @@ export default function AuthPage() {
       router.push("/tasks");
     } catch (error) {
       console.error("Erro ao fazer login: ", error);
-      setErrors({ general: "Não foi possível realizar o login" });
       toast.error("Erro ao realizar login. Tente novamente.");
     }
   };
 
-  const handleRegister = async () => {
+  const handleRegister = async (data: FormRegisterSchema) => {
     try {
-      const isValid = await validateRegister();
-      if (!isValid) {
-        return;
-      }
-      const registerUser = await register(registerName, registerEmail, registerPassword);
+      const registerUser = await registerApi(data.name, data.email, data.password);
       if (registerUser.message === "Email ja cadastrado") {
-        setErrors({ email: "Usuário já existe" });
         toast.error("Usuário já existe");
         return;
       }
       toast.success("Cadastro realizado com sucesso! Faça login para continuar.");
       setActiveTab("login");
+      resetRegister();
     } catch (error: any) {
       console.error("Erro ao fazer cadastro: ", error);
-      setErrors({ email: "Não foi possível fazer o cadastro" });
       toast.error("Erro ao realizar cadastro. Tente novamente.");
     }
   };
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setErrors({});
   };
 
   return (
@@ -134,89 +97,21 @@ export default function AuthPage() {
           <TabsTrigger value="register">Cadastro</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle>Login</CardTitle>
-              <CardDescription>Acesse sua conta</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button className="max-w- w-full cursor-pointer" onClick={handleLogin}>
-                Entrar
-              </Button>
-            </CardFooter>
-          </Card>
+          <CardLogin
+            register={register}
+            handleSubmit={handleSubmit}
+            onSubmit={handleLogin}
+            errors={loginErrors}
+          />
         </TabsContent>
+
         <TabsContent value="register">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle>Cadastro</CardTitle>
-              <CardDescription>Crie sua conta</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Digite seu nome"
-                  value={registerName}
-                  onChange={(e) => setRegisterName(e.target.value)}
-                />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
-                />
-                {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button className="max-w- w-full cursor-pointer" onClick={handleRegister}>
-                Cadastrar
-              </Button>
-            </CardFooter>
-          </Card>
+          <CardRegister
+            register={registerRegister}
+            handleSubmit={handleSubmitRegister}
+            onSubmit={handleRegister}
+            errors={errorsRegister}
+          />
         </TabsContent>
       </Tabs>
     </div>
