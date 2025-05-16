@@ -85,6 +85,14 @@ export default function AuthPage() {
     }
   };
 
+  const handleGoogle = async () => {
+    try {
+      window.location.href = "http://localhost:3000/auth/google";
+    } catch (error) {
+      console.error("Error during Google login:", error);
+    }
+  };
+
   const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
@@ -101,6 +109,7 @@ export default function AuthPage() {
             register={register}
             handleSubmit={handleSubmit}
             onSubmit={handleLogin}
+            onGoogleLogin={handleGoogle}
             errors={loginErrors}
           />
         </TabsContent>
@@ -110,6 +119,7 @@ export default function AuthPage() {
             register={registerRegister}
             handleSubmit={handleSubmitRegister}
             onSubmit={handleRegister}
+            onGoogleRegister={handleGoogle}
             errors={errorsRegister}
           />
         </TabsContent>

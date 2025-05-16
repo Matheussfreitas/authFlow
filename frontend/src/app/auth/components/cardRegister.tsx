@@ -10,9 +10,10 @@ interface CardRegisterProps {
   handleSubmit: UseFormHandleSubmit<any>;
   onSubmit: SubmitHandler<any>;
   errors: FieldErrors<any>;
+  onGoogleRegister: () => void;
 }
 
-export default function CardRegister({ register, handleSubmit, onSubmit, errors }: CardRegisterProps) {
+export default function CardRegister({ register, handleSubmit, onSubmit, errors, onGoogleRegister }: CardRegisterProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
@@ -60,7 +61,7 @@ export default function CardRegister({ register, handleSubmit, onSubmit, errors 
             Cadastrar
           </Button>
           <p>ou</p>
-          <Button className="w-full cursor-pointer" variant="outline">
+          <Button className="w-full cursor-pointer" variant="outline" onClick={onGoogleRegister}>
             <FcGoogle className="mr-2 h-4 w-4" />
             Criar com Google
           </Button>

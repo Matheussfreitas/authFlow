@@ -10,9 +10,10 @@ interface CardLoginProps {
   handleSubmit: UseFormHandleSubmit<any>;
   onSubmit: SubmitHandler<any>;
   errors: FieldErrors<any>;
+  onGoogleLogin: () => void;
 }
 
-export default function CardLogin({ register, handleSubmit, onSubmit, errors }: CardLoginProps) {
+export default function CardLogin({ register, handleSubmit, onSubmit, errors, onGoogleLogin }: CardLoginProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
@@ -49,7 +50,7 @@ export default function CardLogin({ register, handleSubmit, onSubmit, errors }: 
             Entrar
           </Button>
           <p>ou</p>
-          <Button className="w-full cursor-pointer" variant="outline">
+          <Button className="w-full cursor-pointer" variant="outline" onClick={onGoogleLogin}>
             <FcGoogle className="mr-2"/>
             Continuar com Google
           </Button>

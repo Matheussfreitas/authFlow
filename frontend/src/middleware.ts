@@ -2,16 +2,21 @@ import { MiddlewareConfig, NextRequest, NextResponse } from "next/server"
 
 const public_routes =  [
   { path: '/auth', authenticated: 'redirect' },
+  { path: '/auth/callback', authenticated: 'redirect' }
 ] as const
 
 const NOT_AUTHETICATION = '/auth'
 
 export default function Middleware(request: NextRequest) {
-  console.log(`[Middleware] Requisição interceptada: ${request.nextUrl.pathname}`);
+  console.log(`[Middleware] Requisição interceptada: "${request.nextUrl.pathname}"`);
 
   const path = request.nextUrl.pathname
   const isPublicRoute = public_routes.find(route => route.path === path)
   const authToken = request.cookies.get('authFlowToken')
+
+  if (!path || path === '/') {
+    return NextResponse.next()
+  }
 
   if (!authToken && isPublicRoute) {
     return NextResponse.next()

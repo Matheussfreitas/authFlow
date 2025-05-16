@@ -2,7 +2,6 @@ import { Task } from '@/types/Task';
 import { User } from '@/types/User';
 import axios from 'axios';
 
-// Configuração da instância do Axios
 const api = axios.create({
   baseURL: "http://localhost:3000",
 });
