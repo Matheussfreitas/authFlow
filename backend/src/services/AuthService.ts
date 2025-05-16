@@ -49,6 +49,7 @@ export class AuthService {
   }
 
   async handleGoogleLogin(profile: Profile) {
+    console.log("[AuthService] Iniciando autenticação com Google, profile:", profile);
     if (!profile.emails || profile.emails.length === 0) {
       throw new Error("O perfil do Google não contém um e-mail válido.");
     }

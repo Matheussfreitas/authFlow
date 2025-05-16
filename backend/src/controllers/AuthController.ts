@@ -38,12 +38,13 @@ export class AuthController {
   }
 
   static async googleCallback(req: Request, res: Response) {
+    console.log("req.user no callback:", req.user);
     try {
-      const user = req.user;
+      const user = req.user as { token: string };
       if (!user) {
         return res.status(401).json({ message: "Usuário não autenticado" });
       }
-      res.status(200).json(user);
+      return res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${user.token}`);
     } catch (error) {
       console.error("Erro no callback do Google:", error);
       res.status(500).json({ message: "Erro ao processar login do Google" });
