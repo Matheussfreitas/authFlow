@@ -2,7 +2,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
 import * as yup from "yup";
-import { login, register as registerApi } from "../../utils/axios";
+import { login, LoginSuccess, register as registerApi } from "../../utils/axios";
 import { useRouter } from "next/navigation";
 import { setCookie } from "nookies";
 import { toast } from "sonner";
@@ -53,16 +53,16 @@ export default function AuthPage() {
   const handleLogin = async (data: FormLoginSchema) => {
     try {
       const user = await login(data.email, data.password);
-      if (user.message === "Usuario nao encontrado") {
+      if ("message" in user && user.message === "Usuario nao encontrado") {
         toast.error("Usuário não encontrado");
         return;
       }
-      const token = user.token;
+      const token = (user as LoginSuccess).token;
       setCookie(undefined, "authFlowToken", token, {
         maxAge: 60 * 60 * 1, // 1 hora
       });
       toast.success("Login realizado com sucesso!");
-      router.push("/tasks");
+      router.push("/autenticado");
     } catch (error) {
       console.error("Erro ao fazer login: ", error);
       toast.error("Erro ao realizar login. Tente novamente.");
@@ -72,7 +72,7 @@ export default function AuthPage() {
   const handleRegister = async (data: FormRegisterSchema) => {
     try {
       const registerUser = await registerApi(data.name, data.email, data.password);
-      if (registerUser.message === "Email ja cadastrado") {
+      if ("message" in registerUser && registerUser.message === "Email ja cadastrado") {
         toast.error("Usuário já existe");
         return;
       }

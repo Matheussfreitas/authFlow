@@ -6,7 +6,20 @@ const api = axios.create({
   baseURL: "http://localhost:3000",
 });
 
-const login = async (email: string, password: string): Promise<User> => {
+export type LoginSuccess = {
+  token: string;
+  user: User;
+}
+
+type LoginError = {
+  message: string;
+}
+
+type LoginResponse = LoginSuccess | LoginError;
+
+type RegisterResponse = User | LoginError;
+
+const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await api.post("/auth/login", {
       email,
@@ -18,7 +31,7 @@ const login = async (email: string, password: string): Promise<User> => {
   }
 };
 
-const register = async (name: string, email: string, password: string): Promise<User> => {
+const register = async (name: string, email: string, password: string): Promise<RegisterResponse> => {
   try {
     const response = await api.post("/auth/register", {
       name,
