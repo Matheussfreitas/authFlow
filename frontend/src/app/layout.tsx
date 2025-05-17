@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gerenciador de Tarefas",
-  description: "Um gerenciador de tarefas simples",
+  title: "Autenticação com authFlow",
+  description: "Um sistema de autenticação",
 };
 
 export default function RootLayout({
