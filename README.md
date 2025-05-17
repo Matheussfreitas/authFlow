@@ -9,6 +9,7 @@ Este é um projeto de Gerenciador de Tarefas desenvolvido com **Next.js** no fro
   - Interface moderna e responsiva utilizando **TailwindCSS**.
   - Componentes reutilizáveis criados com **Shadcn UI**.
   - Gerenciamento de estado com hooks do React.
+  - Formulários com **React-Hook-Form**.
   - Validação de formulários com **Yup**.
   - Notificações com **Sonner**.
 
@@ -16,11 +17,11 @@ Este é um projeto de Gerenciador de Tarefas desenvolvido com **Next.js** no fro
   - Desenvolvido com **Express.js**.
   - Banco de dados PostgreSQL gerenciado pelo **Prisma ORM**.
   - Autenticação com **JWT**.
-  - Rotas RESTful para autenticação e gerenciamento de tarefas.
+  - Rotas RESTful para autenticação.
 
 - **Banco de Dados**:
   - Estrutura de dados gerenciada pelo Prisma.
-  - Modelos para usuários e tarefas com relacionamentos.
+  - Modelos para usuários.
 
 ## Ferramentas e Tecnologias Utilizadas
 
